@@ -86,6 +86,11 @@ main               (int a_argc, char *a_argv [])
    int         a           =    0;
    int         b           =    0;
    char        x_mem       =  '-';
+   char        x_cycle     =  '-';
+   char        x_secs      [LEN_HUND]  = "";
+   char        x_altname   [LEN_HUND]  = "";
+   int         x_max       =    0;
+   int         x_len       =    0;
    /*---(set up signal handling)---------*/
    for (i = 1; i < a_argc; ++i) {
       if (strcmp (a_argv [i], "--bulletproof"   ) == 0)   x_bullet = YEXEC_HARD;
@@ -94,37 +99,48 @@ main               (int a_argc, char *a_argv [])
    }
    /*---(determine looping)--------------*/
    for (i = 1; i < a_argc; ++i) {
-      if (strcmp (a_argv [i], "--nodaemon") == 0)    x_daemon = '-';
-      if (strcmp (a_argv [i], "--graceful") == 0)    x_term   = 'y';
-      if (strcmp (a_argv [i], "--infinite") == 0)    x_loop = 99999;
-      if (strcmp (a_argv [i], "--super"   ) == 0)    x_loop = 60;
-      if (strcmp (a_argv [i], "--longer"  ) == 0)    x_loop = 20;
-      if (strcmp (a_argv [i], "--long"    ) == 0)    x_loop = 10;
-      if (strcmp (a_argv [i], "--4s"      ) == 0)    x_loop = 4;
-      if (strcmp (a_argv [i], "--short"   ) == 0)    x_loop = 1;
-      if (strcmp (a_argv [i], "--instant" ) == 0)    x_loop = 0;
-      if (strcmp (a_argv [i], "--hup"     ) == 0)    x_hup  = atoi (a_argv [++i]);
-      if (strcmp (a_argv [i], "--Lcpu"    ) == 0)    x_cpu  = 'L';
-      if (strcmp (a_argv [i], "--Mcpu"    ) == 0)    x_cpu  = 'M';
-      if (strcmp (a_argv [i], "--Hcpu"    ) == 0)    x_cpu  = 'H';
-      if (strcmp (a_argv [i], "--normal"  ) == 0)    x_loop = 2;
-      if (strcmp (a_argv [i], "--Lmem"    ) == 0)    x_mem  = 'L';
-      if (strcmp (a_argv [i], "--Mmem"    ) == 0)    x_mem  = 'M';
-      if (strcmp (a_argv [i], "--Hmem"    ) == 0)    x_mem  = 'H';
+      if      (strcmp (a_argv [i], "--nodaemon") == 0)    x_daemon = '-';
+      else if (strcmp (a_argv [i], "--graceful") == 0)    x_term   = 'y';
+      else if (strcmp (a_argv [i], "--infinite") == 0)    x_loop   = 99999;
+      else if (strcmp (a_argv [i], "--super"   ) == 0)    x_loop   = 60;
+      else if (strcmp (a_argv [i], "--longer"  ) == 0)    x_loop   = 20;
+      else if (strcmp (a_argv [i], "--long"    ) == 0)    x_loop   = 10;
+      else if (strcmp (a_argv [i], "--4s"      ) == 0)    x_loop   = 4;
+      else if (strcmp (a_argv [i], "--2s"      ) == 0)    x_loop   = 2;
+      else if (strcmp (a_argv [i], "--short"   ) == 0)    x_loop   = 1;
+      else if (strcmp (a_argv [i], "--instant" ) == 0)    x_loop   = 0;
+      else if (strcmp (a_argv [i], "--cycle"   ) == 0)    x_cycle  = 'y';
+      else if (strcmp (a_argv [i], "--hup"     ) == 0)    x_hup    = atoi (a_argv [++i]);
+      else if (strcmp (a_argv [i], "--Lcpu"    ) == 0)    x_cpu    = 'L';
+      else if (strcmp (a_argv [i], "--Mcpu"    ) == 0)    x_cpu    = 'M';
+      else if (strcmp (a_argv [i], "--Hcpu"    ) == 0)    x_cpu    = 'H';
+      else if (strcmp (a_argv [i], "--normal"  ) == 0)    x_loop   = 2;
+      else if (strcmp (a_argv [i], "--Lmem"    ) == 0)    x_mem    = 'L';
+      else if (strcmp (a_argv [i], "--Mmem"    ) == 0)    x_mem    = 'M';
+      else if (strcmp (a_argv [i], "--Hmem"    ) == 0)    x_mem    = 'H';
       /*---(complicated)-----------------*/
-      if (strcmp (a_argv [i], "--segv"    ) == 0) {
+      else if (strcmp (a_argv [i], "--hobo"    ) == 0) {
+         strcpy (x_altname, "hobo-rider"    );
+      }
+      else if (strcmp (a_argv [i], "--gypsy"   ) == 0) {
+         strcpy (x_altname, "gypsy-wanderer");
+      }
+      else if (strcmp (a_argv [i], "--piker"   ) == 0) {
+         strcpy (x_altname, "piker-traveler");
+      }
+      else if (strcmp (a_argv [i], "--segv"    ) == 0) {
          printf ("%s", p);
          x_loop = 2;
       }
-      if (strcmp (a_argv [i], "--badrc"   ) == 0) {
+      else if (strcmp (a_argv [i], "--badrc"   ) == 0) {
          x_daemon = '-';
          x_loop = 1;
          rc     = -12;
       }
-      if (strcmp (a_argv [i], "--whoami"  ) == 0) {
-         rc = yEXEC_whoami (&x_pid, &x_ppid, &x_uid, &x_root, x_who, 'n');
+      else if (strcmp (a_argv [i], "--whoami"  ) == 0) {
+         rc = yEXEC_whoami (&x_pid, &x_ppid, &x_uid, NULL, &x_root, x_who, 'n', NULL, NULL, NULL);
          getcwd (x_home, LEN_HUND);
-         rc = strlproj (x_home, x_proj);
+         rc = ystrlproj (x_home, x_proj);
          f  = fopen ("/tmp/unit_whoami.txt", "wt");
          if (f != NULL) {
             fprintf (f, "pid  : %d\n" , x_pid);
@@ -144,6 +160,14 @@ main               (int a_argc, char *a_argv [])
    /*---(daemonize)----------------------*/
    if (x_daemon == 'y')  yEXEC_daemon (-1, (int *) 0);
    yEXEC_signal (x_bullet, x_inter, x_child, incomming, "unit");
+   /*---(name-change)--------------------*/
+   x_len = strlen (x_altname);
+   if (x_len > 0) {
+      rc = yEXEC_maxname (a_argc, a_argv, &x_max);
+      ystrlcat (x_altname, YSTR_EMPTY, LEN_HUND);
+      ystrlcpy (a_argv [0], x_altname, x_max);
+      sync ();
+   }
    /*---(loop)---------------------------*/
    f = fopen ("/tmp/unit_ticker.txt", "wt");
    i = 0;
@@ -152,6 +176,10 @@ main               (int a_argc, char *a_argv [])
          if (f != NULL) {
             fprintf (f, ".");
             fflush  (f);
+         }
+         if (x_cycle == 'y') {
+            sprintf (x_secs, "%s [%2ds]", P_NAMESAKE, i);
+            strcpy (a_argv [0], x_secs);
          }
          sleep (1);
          switch (x_mem) {
