@@ -91,33 +91,32 @@ main               (int a_argc, char *a_argv [])
    char        x_altname   [LEN_HUND]  = "";
    int         x_max       =    0;
    int         x_len       =    0;
-   /*---(set up signal handling)---------*/
-   for (i = 1; i < a_argc; ++i) {
-      if (strcmp (a_argv [i], "--bulletproof"   ) == 0)   x_bullet = YEXEC_HARD;
-      if (strcmp (a_argv [i], "--interactive"   ) == 0)   x_inter  = YEXEC_YES;
-      if (strcmp (a_argv [i], "--children"      ) == 0)   x_child  = YEXEC_YES;
-   }
    /*---(determine looping)--------------*/
    for (i = 1; i < a_argc; ++i) {
-      if      (strcmp (a_argv [i], "--nodaemon") == 0)    x_daemon = '-';
-      else if (strcmp (a_argv [i], "--graceful") == 0)    x_term   = 'y';
-      else if (strcmp (a_argv [i], "--infinite") == 0)    x_loop   = 99999;
-      else if (strcmp (a_argv [i], "--super"   ) == 0)    x_loop   = 60;
-      else if (strcmp (a_argv [i], "--longer"  ) == 0)    x_loop   = 20;
-      else if (strcmp (a_argv [i], "--long"    ) == 0)    x_loop   = 10;
-      else if (strcmp (a_argv [i], "--4s"      ) == 0)    x_loop   = 4;
-      else if (strcmp (a_argv [i], "--2s"      ) == 0)    x_loop   = 2;
-      else if (strcmp (a_argv [i], "--short"   ) == 0)    x_loop   = 1;
-      else if (strcmp (a_argv [i], "--instant" ) == 0)    x_loop   = 0;
-      else if (strcmp (a_argv [i], "--cycle"   ) == 0)    x_cycle  = 'y';
-      else if (strcmp (a_argv [i], "--hup"     ) == 0)    x_hup    = atoi (a_argv [++i]);
-      else if (strcmp (a_argv [i], "--Lcpu"    ) == 0)    x_cpu    = 'L';
-      else if (strcmp (a_argv [i], "--Mcpu"    ) == 0)    x_cpu    = 'M';
-      else if (strcmp (a_argv [i], "--Hcpu"    ) == 0)    x_cpu    = 'H';
-      else if (strcmp (a_argv [i], "--normal"  ) == 0)    x_loop   = 2;
-      else if (strcmp (a_argv [i], "--Lmem"    ) == 0)    x_mem    = 'L';
-      else if (strcmp (a_argv [i], "--Mmem"    ) == 0)    x_mem    = 'M';
-      else if (strcmp (a_argv [i], "--Hmem"    ) == 0)    x_mem    = 'H';
+      /*---(signal handling)-------------*/
+      if      (strcmp (a_argv [i], "--bulletproof"   ) == 0)   x_bullet = YEXEC_HARD;
+      else if (strcmp (a_argv [i], "--interactive"   ) == 0)   x_inter  = YEXEC_YES;
+      else if (strcmp (a_argv [i], "--children"      ) == 0)   x_child  = YEXEC_YES;
+      /*---(normal options)--------------*/
+      else if (strcmp (a_argv [i], "--nodaemon"      ) == 0)   x_daemon = '-';
+      else if (strcmp (a_argv [i], "--graceful"      ) == 0)   x_term   = 'y';
+      else if (strcmp (a_argv [i], "--infinite"      ) == 0)   x_loop   = 99999;
+      else if (strcmp (a_argv [i], "--super"         ) == 0)   x_loop   = 60;
+      else if (strcmp (a_argv [i], "--longer"        ) == 0)   x_loop   = 20;
+      else if (strcmp (a_argv [i], "--long"          ) == 0)   x_loop   = 10;
+      else if (strcmp (a_argv [i], "--4s"            ) == 0)   x_loop   = 4;
+      else if (strcmp (a_argv [i], "--2s"            ) == 0)   x_loop   = 2;
+      else if (strcmp (a_argv [i], "--short"         ) == 0)   x_loop   = 1;
+      else if (strcmp (a_argv [i], "--instant"       ) == 0)   x_loop   = 0;
+      else if (strcmp (a_argv [i], "--cycle"         ) == 0)   x_cycle  = 'y';
+      else if (strcmp (a_argv [i], "--hup"           ) == 0)   x_hup    = atoi (a_argv [++i]);
+      else if (strcmp (a_argv [i], "--Lcpu"          ) == 0)   x_cpu    = 'L';
+      else if (strcmp (a_argv [i], "--Mcpu"          ) == 0)   x_cpu    = 'M';
+      else if (strcmp (a_argv [i], "--Hcpu"          ) == 0)   x_cpu    = 'H';
+      else if (strcmp (a_argv [i], "--normal"        ) == 0)   x_loop   = 2;
+      else if (strcmp (a_argv [i], "--Lmem"          ) == 0)   x_mem    = 'L';
+      else if (strcmp (a_argv [i], "--Mmem"          ) == 0)   x_mem    = 'M';
+      else if (strcmp (a_argv [i], "--Hmem"          ) == 0)   x_mem    = 'H';
       /*---(complicated)-----------------*/
       else if (strcmp (a_argv [i], "--hobo"    ) == 0) {
          strcpy (x_altname, "hobo-rider"    );
@@ -156,6 +155,14 @@ main               (int a_argc, char *a_argv [])
          rc = chmod ("/tmp/unit_whoami.txt", 0666);
          return 0;
       }
+      else if (strcmp (a_argv [i], "--nothing" ) == 0)   return   0;
+      else if (strcmp (a_argv [i], "--positive") == 0)   return   1;
+      else if (strcmp (a_argv [i], "--approved") == 0)   return   2;
+      else if (strcmp (a_argv [i], "--repaired") == 0)   return   3;
+      else if (strcmp (a_argv [i], "--warning" ) == 0)   return   4;
+      else if (strcmp (a_argv [i], "--error"   ) == 0)   return   5;
+      else if (strcmp (a_argv [i], "--fatal"   ) == 0)   return -11;
+      else                                               return -20;
    }
    /*---(daemonize)----------------------*/
    if (x_daemon == 'y')  yEXEC_daemon (-1, (int *) 0);

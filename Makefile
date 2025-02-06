@@ -32,13 +32,15 @@ LIB_UTIL   =
 
 
 #===(master template)======================================#
-include /usr/local/sbin/make_program
+include /usr/local/sbin/zeno_make
 
 
 
 #===(post-processing)======================================#
 # create a rule for...
-#install_post       :
+install_post       :
+	ln --force --physical /usr/local/bin/unit_daemon   /usr/local/bin/agathos
+	@sha1sum  /usr/local/bin/agathos
 
 
 #remove_post        :

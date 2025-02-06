@@ -33,8 +33,8 @@
 /*········· ··········· ´·····························´········································*/
 #define     P_VERMAJOR  "1.--, in production"
 #define     P_VERMINOR  "1.5-, used across several unit tests"
-#define     P_VERNUM    "1.5b"
-#define     P_VERTXT    "update to yEXEC_whoami"
+#define     P_VERNUM    "1.5c"
+#define     P_VERTXT    "options for testing standard yJOBS return codes"
 /*········· ··········· ´·····························´········································*/
 #define     P_PRIORITY  "direct, simple, brief, vigorous, and lucid (h.w. fowler)"
 #define     P_PRINCIPAL "[grow a set] and build your wings on the way down (r. bradbury)"
